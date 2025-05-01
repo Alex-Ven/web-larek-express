@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import winston from 'winston';
 import expressWinston from 'express-winston';
 

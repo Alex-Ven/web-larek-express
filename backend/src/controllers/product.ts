@@ -6,7 +6,7 @@ import Product from '../models/product';
 import ConflictError from '../errors/conflict-error';
 
 // GET /product — получение всех товаров
-export const getProduct = async (req: Request, res: Response) => {
+export const getProduct = async (_req: Request, res: Response) => {
   try {
     const products = await Product.find();
     // Формируем ответ в ожидаемом формате
@@ -16,7 +16,6 @@ export const getProduct = async (req: Request, res: Response) => {
     };
     res.status(200).send(response);
   } catch (error) {
-    console.error('Ошибка при получении товаров:', error);
     res.status(500).send({ message: 'Ошибка сервера' });
   }
 };
@@ -36,7 +35,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       price,
     });
 
-    res.status(201).send(product);
+    return res.status(201).send(product);
   } catch (error) {
     // Обработка ошибок валидации
     if (error instanceof MongooseError.ValidationError) {

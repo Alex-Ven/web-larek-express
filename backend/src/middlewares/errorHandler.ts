@@ -4,9 +4,9 @@ import { Error as MongooseError } from 'mongoose';
 
 const errorHandler = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction,
 ) => {
   // Определяем статус и сообщение по умолчанию
   let statusCode = 500;

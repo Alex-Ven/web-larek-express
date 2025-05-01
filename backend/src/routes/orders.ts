@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { celebrate, Joi } from 'celebrate';
+import { celebrate } from 'celebrate';
 import createOrder from '../controllers/orders';
 import orderBodySchema from '../middlewares/validationSchemas/orderBodySchema';
 

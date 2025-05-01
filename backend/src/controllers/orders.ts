@@ -32,12 +32,11 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     const orderId = faker.string.uuid();
 
     // Возвращаем успешный ответ
-    res.status(201).send({
+    return res.status(201).send({
       id: orderId,
       total,
     });
   } catch (error) {
-    console.error('Ошибка при создании заказа:', error);
     return next(new InternalServerError('Ошибка сервера'));
   }
 };
