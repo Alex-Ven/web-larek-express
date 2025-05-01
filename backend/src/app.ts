@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
 import productsRouter from './routes/product';
+import ordersRouter from './routes/orders';
 
 const app = express();
 const PORT = 3000;
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
 
 // Подключение роутов
 app.use('/product', productsRouter);
+app.use('/order', ordersRouter);
 
 connectToMongoDB().then(() => {
   app.listen(PORT, () => {
