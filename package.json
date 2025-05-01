@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^9.7.0",
+    "celebrate": "^15.0.3",
+    "joi": "^17.13.3",
     "mongoose": "^8.14.0"
   },
   "devDependencies": {

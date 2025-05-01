@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { celebrate, Joi, errors } from 'celebrate';
+import { celebrate } from 'celebrate';
 import { getProduct, createProduct } from '../controllers/product';
+import productBodySchema from '../middlewares/validationSchemas/productBodySchema';
 
 const router = Router();
 
@@ -8,6 +9,12 @@ const router = Router();
 router.get('/', getProduct);
 
 // Создание нового товара
-router.post('/', createProduct);
+router.post(
+  '/',
+  celebrate({
+    body: productBodySchema,
+  }),
+  createProduct,
+);
 
 export default router;
