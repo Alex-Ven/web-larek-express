@@ -15,7 +15,7 @@ node_modules
 .vscode
 
 # Typescript build
-dist
-public
-temp
+dist/
+public/
+temp/
 .env

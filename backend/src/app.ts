@@ -6,6 +6,7 @@ import productsRouter from './routes/product';
 import ordersRouter from './routes/orders';
 import errorHandler from './middlewares/errorHandler';
 import { errors as celebrateErrors } from 'celebrate';
+import { requestLogger, errorLogger } from './middlewares/logger';
 
 const app = express();
 const PORT = 3000;
@@ -27,12 +28,18 @@ const connectToMongoDB = async () => {
   }
 };
 
+// Логгер запросов
+app.use(requestLogger);
+
 // Простой маршрут для проверки работы сервера
 app.get('/');
 
 // Подключение роутов
 app.use('/product', productsRouter);
 app.use('/order', ordersRouter);
+
+// Логгер ошибок
+app.use(errorLogger);
 
 // Обработка ошибок celebrate
 app.use(celebrateErrors());
