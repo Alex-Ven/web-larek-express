@@ -4,7 +4,6 @@ import BadRequestError from '../errors/bad-request-errors';
 import InternalServerError from '../errors/internal-server-error';
 import Product from '../models/product';
 
-
 // POST /order — создание заказа
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
