@@ -1,5 +1,9 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { Error as MongooseError } from 'mongoose';
+import BadRequestError from '../errors/bad-request-errors';
+import InternalServerError from '../errors/internal-server-error';
 import Product from '../models/product';
+import ConflictError from '../errors/conflict-error';
 
 // GET /product — получение всех товаров
 export const getProduct = async (req: Request, res: Response) => {
@@ -18,7 +22,7 @@ export const getProduct = async (req: Request, res: Response) => {
 };
 
 // POST /product — создание нового товара
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
       title, image, category, description, price,
@@ -34,7 +38,17 @@ export const createProduct = async (req: Request, res: Response) => {
 
     res.status(201).send(product);
   } catch (error) {
-    console.error('Ошибка при создании товара:', error);
-    res.status(400).send({ message: 'Неверные данные' });
+    // Обработка ошибок валидации
+    if (error instanceof MongooseError.ValidationError) {
+      return next(new BadRequestError(error.message));
+    }
+
+    // Обработка ошибок дублирования уникального поля
+    if (error instanceof Error && error.message.includes('E11000')) {
+      return next(new ConflictError('Товар с таким названием уже существует'));
+    }
+
+    // Обработка остальных ошибок
+    return next(new InternalServerError('Ошибка сервера'));
   }
 };

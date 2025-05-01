@@ -4,6 +4,8 @@ import cors from 'cors';
 import path from 'path';
 import productsRouter from './routes/product';
 import ordersRouter from './routes/orders';
+import errorHandler from './middlewares/errorHandler';
+import { errors as celebrateErrors } from 'celebrate';
 
 const app = express();
 const PORT = 3000;
@@ -26,13 +28,17 @@ const connectToMongoDB = async () => {
 };
 
 // Простой маршрут для проверки работы сервера
-app.get('/', (req, res) => {
-  res.send('Express-сервер запущен!');
-});
+app.get('/');
 
 // Подключение роутов
 app.use('/product', productsRouter);
 app.use('/order', ordersRouter);
+
+// Обработка ошибок celebrate
+app.use(celebrateErrors());
+
+// Централизованный обработчик ошибок
+app.use(errorHandler);
 
 connectToMongoDB().then(() => {
   app.listen(PORT, () => {

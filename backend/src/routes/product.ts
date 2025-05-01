@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { celebrate, Joi, errors } from 'celebrate';
 import { getProduct, createProduct } from '../controllers/product';
 
 const router = Router();

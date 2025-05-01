@@ -1,5 +1,7 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
+import BadRequestError from '../errors/bad-request-errors';
+import InternalServerError from '../errors/internal-server-error';
 import Product from '../models/product';
 
 enum Payment {
@@ -14,7 +16,7 @@ function validateEmail(email: string): boolean {
 }
 
 // POST /order — создание заказа
-const createOrder = async (req: Request, res: Response) => {
+const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
       payment, email, phone, address, total, items,
@@ -22,38 +24,38 @@ const createOrder = async (req: Request, res: Response) => {
 
     // Валидация обязательных полей
     if (!payment || !Object.values(Payment).includes(payment)) {
-      return res.status(400).send({ message: 'Неверное значение поля payment' });
+      return next(new BadRequestError('Неверное значение поля payment'));
     }
     if (!email || !validateEmail(email)) {
-      return res.status(400).send({ message: 'Неверный формат email' });
+      return next(new BadRequestError('Неверный формат email'));
     }
     if (!phone || typeof phone !== 'string') {
-      return res.status(400).send({ message: 'Неверный формат phone' });
+      return next(new BadRequestError('Неверный формат phone'));
     }
     if (!address || typeof address !== 'string') {
-      return res.status(400).send({ message: 'Неверный формат address' });
+      return next(new BadRequestError('Неверный формат address'));
     }
     if (typeof total !== 'number') {
-      return res.status(400).send({ message: 'Неверный формат total' });
+      return next(new BadRequestError('Неверный формат total'));
     }
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).send({ message: 'Неверный формат items' });
+      return next(new BadRequestError('Неверный формат items'));
     }
 
     // Проверка товаров
     const products = await Product.find({ _id: { $in: items } });
     if (products.length !== items.length) {
-      return res.status(400).send({ message: 'Один или несколько товаров не найдены' });
+      return next(new BadRequestError('Один или несколько товаров не найдены'));
     }
     const invalidProducts = products.filter((product) => product.price === null);
     if (invalidProducts.length > 0) {
-      return res.status(400).send({ message: 'Один или несколько товаров не продаются' });
+      return next(new BadRequestError('Один или несколько товаров не продаются'));
     }
 
     // Проверка суммы заказа
     const calculatedTotal = products.reduce((sum, product) => sum + (product.price || 0), 0);
     if (calculatedTotal !== total) {
-      return res.status(400).send({ message: 'Неверная сумма заказа' });
+      return next(new BadRequestError('Неверная сумма заказа'));
     }
 
     // Генерация ID заказа
@@ -66,7 +68,7 @@ const createOrder = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Ошибка при создании заказа:', error);
-    res.status(500).send({ message: 'Ошибка сервера' });
+    return next(new InternalServerError('Ошибка сервера'));
   }
 };
 
