@@ -7,6 +7,7 @@ import ordersRouter from './routes/orders';
 import errorHandler from './middlewares/errorHandler';
 import { errors as celebrateErrors } from 'celebrate';
 import { requestLogger, errorLogger } from './middlewares/logger';
+import NotFoundError from './errors/not-found-error';
 
 const app = express();
 const PORT = 3000;
@@ -37,6 +38,11 @@ app.get('/');
 // Подключение роутов
 app.use('/product', productsRouter);
 app.use('/order', ordersRouter);
+
+// Middleware для обработки несуществующих путей
+app.use((_req, _res, next) => {
+  next(new NotFoundError('Запрашиваемый ресурс не найден'));
+});
 
 // Логгер ошибок
 app.use(errorLogger);
