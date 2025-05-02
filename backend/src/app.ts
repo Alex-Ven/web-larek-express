@@ -9,8 +9,14 @@ import { errors as celebrateErrors } from 'celebrate';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import NotFoundError from './errors/not-found-error';
 
+// Загрузка переменных окружения из .env
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 const app = express();
-const PORT = 3000;
+
+// Порт из переменной окружения или значение по умолчанию
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 // Middleware
 app.use(cors());
