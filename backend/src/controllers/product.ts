@@ -6,7 +6,7 @@ import Product from '../models/product';
 import ConflictError from '../errors/conflict-error';
 
 // GET /product — получение всех товаров
-export const getProduct = async (_req: Request, res: Response) => {
+export const getProduct = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const products = await Product.find();
     // Формируем ответ в ожидаемом формате
@@ -14,9 +14,9 @@ export const getProduct = async (_req: Request, res: Response) => {
       items: products,
       total: products.length,
     };
-    res.status(200).send(response);
+    return res.status(200).send(response);
   } catch (error) {
-    res.status(500).send({ message: 'Ошибка сервера' });
+    return next(new InternalServerError('Ошибка сервера'));
   }
 };
 
